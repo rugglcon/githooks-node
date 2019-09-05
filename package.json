@@ -4,7 +4,8 @@
   "description": " Very simple node server to automate deployment of apps ",
   "main": "dist/index.js",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "npm-run": "^5.0.1"
   },
   "devDependencies": {},
   "scripts": {
