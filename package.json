@@ -1,0 +1,30 @@
+{
+  "name": "githooks-node",
+  "version": "1.0.0",
+  "description": " Very simple node server to automate deployment of apps ",
+  "main": "dist/index.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rugglcon/githooks-node.git"
+  },
+  "keywords": [
+    "git",
+    "githooks",
+    "webhooks",
+    "node",
+    "express"
+  ],
+  "author": "Connor Ruggles <conruggles@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rugglcon/githooks-node/issues"
+  },
+  "homepage": "https://github.com/rugglcon/githooks-node#readme"
+}
