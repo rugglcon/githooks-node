@@ -9,7 +9,7 @@ app.post('/connorruggles.dev', (req, res) => {
         if (err) {
             console.log('an error occurred with connorruggles.dev deploy');
             console.log(err);
-            res.end();
+            res.status(500).send(err);
         }
         console.log(stdout);
         console.log('successfully deployed connorruggles.dev');
@@ -23,7 +23,7 @@ app.post('/budget-tracker-ui', (req, res) => {
         if (err) {
             console.log('an error occurred with budget-tracker-ui deploy');
             console.log(err);
-            res.end();
+            res.status(500).send(err);
         }
         console.log(stdout);
         console.log('successfully deployed budget-tracker-ui');
