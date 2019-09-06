@@ -19,4 +19,11 @@ app.post('/budget-tracker-ui', (req, res) => {
     res.end();
 });
 
+app.post('/githooks', (req, res) => {
+    console.log(`received webhook for githooks-node from host: ${req.headers.host}, origin: ${req.get('origin')}`);
+    exec('cd /var/www/githooks-node && git pull && systemctl restart githooks.service');
+    console.log('successfully deployed githooks');
+    res.end();
+});
+
 app.listen(3300);
