@@ -14,7 +14,7 @@ app.post('/budget-tracker-ui', (req, res) => {
     console.log(`received webhook for budget-tracker-ui from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec('cd /home/connor/dev/budget-tracker-ui && git pull && npm install');
     exec('./node_modules/.bin/ng build --prod --progress=false', {cwd: '/home/connor/dev/budget-tracker-ui'});
-    exec('cp dist/* /var/www/budget-tracker-ui');
+    exec('/bin/cp dist/* /var/www/budget-tracker-ui');
     console.log('successfully deployed budget-tracker-ui');
     res.end();
 });
