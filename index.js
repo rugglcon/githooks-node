@@ -37,22 +37,26 @@ app.post('/connorruggles.dev', (req, res) => {
         if (err) {
             res.status(500).send(err);
             console.log('something went wrong deploying connorruggles.dev');
-            return getTransport().sendMail({
-                from: 'Githooks auto deploy application',
-                to: 'conruggles@gmail.com',
-                subject: 'Error deploying connorruggles.dev',
-                html: '<p>There was an error trying to deploy connorruggles.dev: ' + err.message + '<br>' + err.stack + '</p>'
-            }).then(info => {
-                console.log('sent email telling of error; messageId: ' + info.messageId);
+            return getTransport().then(() => {
+                transport.sendMail({
+                    from: 'Githooks auto deploy application',
+                    to: 'conruggles@gmail.com',
+                    subject: 'Error deploying connorruggles.dev',
+                    html: '<p>There was an error trying to deploy connorruggles.dev: ' + err.message + '<br>' + err.stack + '</p>'
+                }).then(info => {
+                    console.log('sent email telling of error; messageId: ' + info.messageId);
+                });
             }).catch(console.log);
         }
         console.log('successfully deployed connorruggles.dev');
-        getTransport().sendMail({
-            from: 'Githooks auto deploy application',
-            to: 'conruggles@gmail.com',
-            subject: 'Successfully deployed connorruggles.dev',
-            html: '<p>No content.</p>'
-        });
+        getTransport().then(() => {
+            transport.sendMail({
+                from: 'Githooks auto deploy application',
+                to: 'conruggles@gmail.com',
+                subject: 'Successfully deployed connorruggles.dev',
+                html: '<p>No content.</p>'
+            });
+        }).catch(console.log);
     });
     res.end();
 });
@@ -65,22 +69,26 @@ app.post('/budget-tracker-ui', (req, res) => {
              if (err) {
                  console.log('something went wrong deploying budget-tracker-ui', err);
                  res.status(500).send(err);
-                 return getTransport().sendMail({
-                    from: 'Githooks auto deploy application',
-                    to: 'conruggles@gmail.com',
-                    subject: 'Error deploying budget-tracker-ui',
-                    html: '<p>There was an error trying to deploy budget-tracker-ui: ' + err.message + '<br>' + err.stack + '</p>'
-                }).then(info => {
-                    console.log('sent email telling of error; messageId: ' + info.messageId);
+                 return getTransport().then(() => {
+                    transport.sendMail({
+                        from: 'Githooks auto deploy application',
+                        to: 'conruggles@gmail.com',
+                        subject: 'Error deploying budget-tracker-ui',
+                        html: '<p>There was an error trying to deploy budget-tracker-ui: ' + err.message + '<br>' + err.stack + '</p>'
+                    }).then(info => {
+                        console.log('sent email telling of error; messageId: ' + info.messageId);
+                    });
                 }).catch(console.log);
              }
              console.log('successfully deployed budget-tracker-ui');
-             getTransport().sendMail({
-                from: 'Githooks auto deploy application',
-                to: 'conruggles@gmail.com',
-                subject: 'Successfully deployed budget-tracker-ui',
-                html: '<p>No content.</p>'
-            });
+             getTransport().then(() => {
+                transport.sendMail({
+                    from: 'Githooks auto deploy application',
+                    to: 'conruggles@gmail.com',
+                    subject: 'Successfully deployed budget-tracker-ui',
+                    html: '<p>No content.</p>'
+                });
+            }).catch(console.log);
     });
     res.end();
 });
@@ -91,22 +99,26 @@ app.post('/githooks', (req, res) => {
         if (err) {
             console.log('something went wrong deploying githooks');
             res.status(500).send(err);
-            return getTransport().sendMail({
-                from: 'Githooks auto deploy application',
-                to: 'conruggles@gmail.com',
-                subject: 'Error deploying githooks',
-                html: '<p>There was an error trying to deploy githooks: ' + err.message + '<br>' + err.stack + '</p>'
-            }).then(info => {
-                console.log('sent email telling of error; messageId: ' + info.messageId);
+            return getTransport().then(() => {
+                transport.sendMail({
+                    from: 'Githooks auto deploy application',
+                    to: 'conruggles@gmail.com',
+                    subject: 'Error deploying githooks',
+                    html: '<p>There was an error trying to deploy githooks: ' + err.message + '<br>' + err.stack + '</p>'
+                }).then(info => {
+                    console.log('sent email telling of error; messageId: ' + info.messageId);
+                });
             }).catch(console.log);
         }
         console.log('successfully deployed githooks');
-        getTransport().sendMail({
-            from: 'Githooks auto deploy application',
-            to: 'conruggles@gmail.com',
-            subject: 'Successfully deployed githooks',
-            html: '<p>No content.</p>'
-        });
+        getTransport().then(() => {
+            transport.sendMail({
+                from: 'Githooks auto deploy application',
+                to: 'conruggles@gmail.com',
+                subject: 'Successfully deployed githooks',
+                html: '<p>No content.</p>'
+            });
+        }).catch(console.log);
     });
     res.end();
 });
