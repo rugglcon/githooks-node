@@ -55,7 +55,7 @@ app.post('/connorruggles.dev', (req, res) => {
                 to: 'conruggles@gmail.com',
                 subject: 'Successfully deployed connorruggles.dev',
                 html: '<p>No content.</p>'
-            });
+            }).then(info => console.log('sent success email with id ' + info.messageId));
         }).catch(console.log);
     });
     res.end();
@@ -87,7 +87,7 @@ app.post('/budget-tracker-ui', (req, res) => {
                     to: 'conruggles@gmail.com',
                     subject: 'Successfully deployed budget-tracker-ui',
                     html: '<p>No content.</p>'
-                });
+                }).then(info => console.log('sent success email with id ' + info.messageId));
             }).catch(console.log);
     });
     res.end();
@@ -117,7 +117,7 @@ app.post('/githooks', (req, res) => {
                 to: 'conruggles@gmail.com',
                 subject: 'Successfully deployed githooks',
                 html: '<p>No content.</p>'
-            });
+            }).then(info => console.log('sent success email with id ' + info.messageId));
         }).catch(console.log);
     });
     res.end();
