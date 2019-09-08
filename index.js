@@ -19,12 +19,12 @@ const getTransport = async () => {
     const account = await getAccount();
     if (transport == null) {
         transport = mailer.createTransport({
-            host: 'smtp.ethereal.email',
-            port: 587,
-            secure: false,
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
-                user: account.user,
-                pass: account.pass
+                user: 'gitwebhooks@gmail.com',
+                pass: process.env.PASSWORD
             }
         });
     }
