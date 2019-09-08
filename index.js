@@ -19,11 +19,9 @@ const getTransport = async () => {
     const account = await getAccount();
     if (transport == null) {
         transport = mailer.createTransport({
-            host: 'smtp.gmail.com',
-            auth: {
-                user: 'gitwebhooks@gmail.com',
-                pass: process.env.PASSWORD
-            }
+            sendmail: true,
+            newline: 'unix',
+            path: '/usr/sbin/sendmail'
         });
     }
     return transport;
