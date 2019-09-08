@@ -20,8 +20,6 @@ const getTransport = async () => {
     if (transport == null) {
         transport = mailer.createTransport({
             host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
             auth: {
                 user: 'gitwebhooks@gmail.com',
                 pass: process.env.PASSWORD
