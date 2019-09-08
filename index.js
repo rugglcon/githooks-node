@@ -31,7 +31,6 @@ app.post('/connorruggles.dev', (req, res) => {
     console.log(`received webhook for connorruggles.dev from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec(`cd /var/www/connorruggles.dev/html && git pull`, (err, stdout) => {
         if (err) {
-            res.status(500).send(err);
             console.log('something went wrong deploying connorruggles.dev');
             return getTransport().then(() => {
                 transport.sendMail({
@@ -41,7 +40,7 @@ app.post('/connorruggles.dev', (req, res) => {
                     html: '<p>There was an error trying to deploy connorruggles.dev: ' + err.message + '<br>' + err.stack + '</p>'
                 }).then(info => {
                     console.log('sent email telling of error; messageId: ' + info.messageId);
-                });
+                }).catch(console.log);
             }).catch(console.log);
         }
         console.log('successfully deployed connorruggles.dev');
@@ -64,7 +63,6 @@ app.post('/budget-tracker-ui', (req, res) => {
          '/bin/cp dist/budget-tracker/* /var/www/budget-tracker-ui', {cwd: '/home/connor/dev/budget-tracker-ui'}, (err, stdout) => {
              if (err) {
                  console.log('something went wrong deploying budget-tracker-ui', err);
-                 res.status(500).send(err);
                  return getTransport().then(() => {
                     transport.sendMail({
                         from: 'Githooks auto deploy application',
@@ -73,7 +71,7 @@ app.post('/budget-tracker-ui', (req, res) => {
                         html: '<p>There was an error trying to deploy budget-tracker-ui: ' + err.message + '<br>' + err.stack + '</p>'
                     }).then(info => {
                         console.log('sent email telling of error; messageId: ' + info.messageId);
-                    });
+                    }).catch(console.log);
                 }).catch(console.log);
              }
              console.log('successfully deployed budget-tracker-ui');
@@ -94,7 +92,6 @@ app.post('/githooks', (req, res) => {
     exec('cd /var/www/githooks-node && git pull && npm install && /bin/systemctl restart githooks.service', (err, stdout) => {
         if (err) {
             console.log('something went wrong deploying githooks');
-            res.status(500).send(err);
             return getTransport().then(() => {
                 transport.sendMail({
                     from: 'Githooks auto deploy application',
@@ -103,7 +100,7 @@ app.post('/githooks', (req, res) => {
                     html: '<p>There was an error trying to deploy githooks: ' + err.message + '<br>' + err.stack + '</p>'
                 }).then(info => {
                     console.log('sent email telling of error; messageId: ' + info.messageId);
-                });
+                }).catch(console.log);
             }).catch(console.log);
         }
         console.log('successfully deployed githooks');
