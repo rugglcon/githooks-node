@@ -73,6 +73,7 @@ app.post('/budgettracker', (req, res) => {
 app.post('/githooks', (req, res) => {
     console.log(req.body);
     if (req.body.ref) console.log(req.body.ref);
+    else console.log('no ref :(');
     console.log(`received webhook for githooks-node from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec('cd /var/www/githooks-node && git pull && npm install && /bin/systemctl restart githooks.service', (err, stdout) => {
         if (err) {
