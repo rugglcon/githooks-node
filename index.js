@@ -7,17 +7,17 @@ const mg = require('mailgun-js')({ apiKey: process.env.MAILGUN_API_KEY, domain: 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-// app.use((req, res, next) => {
-//     if (req.body && req.body.ref) {
-//         if (req.body.ref.split('/')[1] === 'heads' && req.body.ref.split('/')[2] === 'master') {
-//             console.log('valid githook event');
-//             next();
-//         } else {
-//             console.log('received invalid githook event from ' + req.ip);
-//         }
-//     }
-//     res.end();
-// });
+app.use((req, res, next) => {
+    if (req.body && req.body.ref) {
+        if (req.body.ref.split('/')[1] === 'heads' && req.body.ref.split('/')[2] === 'master') {
+            console.log('valid githook event');
+            next();
+        } else {
+            console.log('received invalid githook event from ' + req.ip);
+        }
+    }
+    res.end();
+});
 
 const sendEmail = (subject, content, cb) => {
     return new Promise((resolve, reject) => {
@@ -49,22 +49,14 @@ const onSuccess = appName => {
 };
 
 app.post('/connorruggles.dev', (req, res) => {
-    if (req.body && req.body.ref) {
-        if (req.body.ref.split('/')[1] === 'heads' && req.body.ref.split('/')[2] === 'master') {
-            console.log('valid githook event');
-            console.log(`received webhook for connorruggles.dev from host: ${req.headers.host}, origin: ${req.get('origin')}`);
-            exec(`cd /var/www/connorruggles.dev/html && git pull`, (err, stdout) => {
-                if (err) {
-                    return onError('connorruggles.dev', err);
-                }
-                onSuccess('connorruggles.dev');
-            });
-            res.end();
-        } else {
-            console.log('received invalid githook event from ' + req.ip);
-            return res.end();
+    console.log(`received webhook for connorruggles.dev from host: ${req.headers.host}, origin: ${req.get('origin')}`);
+    exec(`cd /var/www/connorruggles.dev/html && git pull`, (err, stdout) => {
+        if (err) {
+            return onError('connorruggles.dev', err);
         }
-    }
+        onSuccess('connorruggles.dev');
+    });
+    res.end();
 });
 
 app.post('/budget-tracker-ui', (req, res) => {
@@ -93,7 +85,6 @@ app.post('/budgettracker', (req, res) => {
 
 app.post('/githooks', (req, res) => {
     console.log(`received webhook for githooks-node from host: ${req.headers.host}, origin: ${req.get('origin')}`);
-    console.log(req.body);
     exec('cd /var/www/githooks-node && git pull && npm install && /bin/systemctl restart githooks.service', (err, stdout) => {
         if (err) {
             return onError('githooks', err);
