@@ -10,7 +10,7 @@ const app = express();
 const sendEmail = (subject, content, cb) => {
     return new Promise((resolve, reject) => {
         mg.messages().send({
-            from: 'Githooks auto deploy app',
+            from: process.env.EMAIL,
             to: 'conruggles@gmail.com',
             subject,
             text: content
