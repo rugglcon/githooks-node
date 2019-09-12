@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const mg = require('mailgun-js')({ apiKey: process.env.MAILGUN_API_KEY, domain: 'mg.connorruggles.dev' });
 
 const app = express();
+app.enable('trust proxy');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use((req, res, next) => {
@@ -14,7 +15,7 @@ app.use((req, res, next) => {
             next();
         } else {
             console.log('received invalid githook event from ' + req.ip);
-            sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}\n\nbody: ${req.body}`);
+            sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}\n\nbody: ${req.body.toString()}`);
         }
     }
     res.end();
