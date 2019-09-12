@@ -14,6 +14,7 @@ app.use((req, res, next) => {
             next();
         } else {
             console.log('received invalid githook event from ' + req.ip);
+            sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}\n\nbody: ${req.body}`);
         }
     }
     res.end();
