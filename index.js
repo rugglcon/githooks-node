@@ -10,25 +10,43 @@ app.enable('trust proxy');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use((req, res, next) => {
-    const sig = req.headers['X-Hub-Signature'];
+    const sig = req.get('X-Hub-Signature');
     if (!sig) {
-        console.log('received invalid githook event from ' + req.ip);
-        sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}\n\nbody: ${req.body.toString()}`);
-        res.end();
+        console.log('received invalid githook event');
+        sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}; no signature was included in the header.\n\nbody: ${req.body.toString()}`);
+        return next('No signature header included in the request.');
     }
 
-    if (!crypto.verify('sha1', JSON.stringify(req.body), process.env.GITHOOK_SECRET, sig)) {
-        console.log('received invalid githook event from ' + req.ip);
-        sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}\n\nbody: ${req.body.toString()}`);
+    const payload = JSON.stringify(req.body);
+    if (!payload) {
+        sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}; no payload body was included.\n\nbody: ${req.body.toString()}`);
+        return next('Request body empty');
     }
 
-    if (req.body && req.body.ref) {
+    const hmac = crypto.createHmac('sha1', process.env.GITHOOK_SECRET);
+    const digest = `sha1=${hmac.update(payload).digest('hex')}`;
+
+    if (!digest) {
+        console.log('signatures didn\'t match');
+        sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}; signatures didn't match.\n digest: ${digest}, sig: ${sig}`);
+        return next('signatures didn\'t match');
+    }
+
+    if (req.body.ref) {
         if (req.body.ref.split('/')[1] === 'heads' && req.body.ref.split('/')[2] === 'master') {
             console.log('valid githook event');
-            next();
+            return next();
         }
     }
     res.end();
+});
+
+app.use((err, req, res, next) => {
+    if (err) {
+        console.log(err);
+    }
+    sendEmail('Something went wrong', 'Request body was not signed or verification failed');
+    res.status(403).send('Request body was not signed or verification failed');
 });
 
 const sendEmail = (subject, content) => {
