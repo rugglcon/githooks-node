@@ -19,7 +19,7 @@ app.use((req, res, next) => {
     res.end();
 });
 
-const sendEmail = (subject, content, cb) => {
+const sendEmail = (subject, content) => {
     return new Promise((resolve, reject) => {
         mg.messages().send({
             from: process.env.EMAIL,
