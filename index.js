@@ -17,7 +17,7 @@ app.use((req, res, next) => {
         res.end();
     }
 
-    if (!crypto.verify('sha1', req.body, process.env.GITHOOK_SECRET, sig)) {
+    if (!crypto.verify('sha1', JSON.stringify(req.body), process.env.GITHOOK_SECRET, sig)) {
         console.log('received invalid githook event from ' + req.ip);
         sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}\n\nbody: ${req.body.toString()}`);
     }
