@@ -63,7 +63,7 @@ app.post('/budget-tracker-ui', (req, res) => {
 
 app.post('/budgettracker', (req, res) => {
     console.log(`received webhook for budget tracker backend from host: ${req.headers.host}, origin: ${req.get('origin')}`);
-    exec('cd /var/www/budgettracker && git pull && npm install && npm run build && /bin/systemctl restart budget_api.service', { cwd: '/var/www/budgettracker' }, (err, stdout) => {
+    exec('cd /var/www/budgettracker && git pull && npm install && ./node_modules/.bin/tsc && /bin/systemctl restart budget_api.service', { cwd: '/var/www/budgettracker' }, (err, stdout) => {
         if (err) {
             return onError('budgettracker', err);
         }
