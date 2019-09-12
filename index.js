@@ -21,7 +21,7 @@ const sendEmail = (subject, content, cb) => {
     });
 };
 
-const onError = appName => {
+const onError = (appName, err) => {
     console.log('something went wrong deploying ' + appName);
     console.log(err);
     return sendEmail('Error deploying ' + appName,
@@ -40,7 +40,7 @@ app.post('/connorruggles.dev', (req, res) => {
     console.log(`received webhook for connorruggles.dev from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec(`cd /var/www/connorruggles.dev/html && git pull`, (err, stdout) => {
         if (err) {
-            return onError('connorruggles.dev');
+            return onError('connorruggles.dev', err);
         }
         onSuccess('connorruggles.dev');
     });
@@ -53,7 +53,7 @@ app.post('/budget-tracker-ui', (req, res) => {
         'npm install && ./node_modules/.bin/ng build --prod --progress=false && ' +
         '/bin/cp dist/budget-tracker/* /var/www/budget-tracker-ui', { cwd: '/home/connor/dev/budget-tracker-ui' }, (err, stdout) => {
             if (err) {
-                return onError('budget-tracker-ui');
+                return onError('budget-tracker-ui', err);
             }
             onSuccess('budget-tracker-ui');
     });
@@ -64,7 +64,7 @@ app.post('/githooks', (req, res) => {
     console.log(`received webhook for githooks-node from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec('cd /var/www/githooks-node && git pull && npm install && /bin/systemctl restart githooks.service', (err, stdout) => {
         if (err) {
-            return onError('githooks');
+            return onError('githooks', err);
         }
         onSuccess('githooks');
     });
