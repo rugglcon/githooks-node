@@ -19,9 +19,11 @@ const getTransport = async () => {
     const account = await getAccount();
     if (transport == null) {
         transport = mailer.createTransport({
-            sendmail: true,
-            newline: 'unix',
-            path: '/usr/sbin/sendmail'
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.PASSWORD
+            }
         });
     }
     return transport;
