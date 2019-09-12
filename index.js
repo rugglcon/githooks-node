@@ -1,7 +1,6 @@
 const express = require('express');
 const exec = require('child_process').exec;
 
-console.log(process.env);
 const mg = require('mailgun-js')({ apiKey: process.env.MAILGUN_API_KEY, domain: 'mg.connorruggles.dev' });
 
 const app = express();
@@ -38,7 +37,7 @@ const onSuccess = appName => {
 
 app.post('/connorruggles.dev', (req, res) => {
     console.log(`received webhook for connorruggles.dev from host: ${req.headers.host}, origin: ${req.get('origin')}`);
-    console.log(req.body);
+    console.log(req);
     exec(`cd /var/www/connorruggles.dev/html && git pull`, (err, stdout) => {
         if (err) {
             return onError('connorruggles.dev', err);
