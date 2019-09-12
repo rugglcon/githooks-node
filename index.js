@@ -38,6 +38,7 @@ const onSuccess = appName => {
 
 app.post('/connorruggles.dev', (req, res) => {
     console.log(`received webhook for connorruggles.dev from host: ${req.headers.host}, origin: ${req.get('origin')}`);
+    console.log(req.body);
     exec(`cd /var/www/connorruggles.dev/html && git pull`, (err, stdout) => {
         if (err) {
             return onError('connorruggles.dev', err);
@@ -56,6 +57,17 @@ app.post('/budget-tracker-ui', (req, res) => {
                 return onError('budget-tracker-ui', err);
             }
             onSuccess('budget-tracker-ui');
+    });
+    res.end();
+});
+
+app.post('/budgettracker', (req, res) => {
+    console.log(`received webhook for budget tracker backend from host: ${req.headers.host}, origin: ${req.get('origin')}`);
+    exec('cd /var/www/budgettracker && git pull && npm install && npm run build && /bin/systemctl restart budget_api.service', { cwd: '/var/www/budgettracker' }, (err, stdout) => {
+        if (err) {
+            return onError('budgettracker', err);
+        }
+        onSuccess('budgettracker');
     });
     res.end();
 });
