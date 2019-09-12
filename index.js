@@ -37,7 +37,6 @@ const onSuccess = appName => {
 
 app.post('/connorruggles.dev', (req, res) => {
     console.log(`received webhook for connorruggles.dev from host: ${req.headers.host}, origin: ${req.get('origin')}`);
-    console.log(req);
     exec(`cd /var/www/connorruggles.dev/html && git pull`, (err, stdout) => {
         if (err) {
             return onError('connorruggles.dev', err);
@@ -72,6 +71,8 @@ app.post('/budgettracker', (req, res) => {
 });
 
 app.post('/githooks', (req, res) => {
+    console.log(req.body);
+    if (req.body.ref) console.log(req.body.ref);
     console.log(`received webhook for githooks-node from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec('cd /var/www/githooks-node && git pull && npm install && /bin/systemctl restart githooks.service', (err, stdout) => {
         if (err) {
