@@ -1,59 +1,45 @@
 const express = require('express');
 const exec = require('child_process').exec;
-const npmRun = require('npm-run');
-const mailer = require('nodemailer');
+const mg = require('mailgun-js')({ apiKey: process.env.MAILGUN_API_KEY, domain: 'mg.connorruggles.dev' });
 
 const app = express();
 
-let account = null;
-let transport = null;
-
-const getAccount = async () => {
-    if (account == null) {
-        account = await mailer.createTestAccount();
-    }
-    return account;
+const sendEmail = (subject, content, cb) => {
+    return new Promise((resolve, reject) => {
+        mg.messages().send({
+            from: 'Githooks auto deploy app',
+            to: 'conruggles@gmail.com',
+            subject,
+            text: content
+        }, (err, body) => {
+            if (err) reject(err);
+            resolve(body);
+        });
+    });
 };
 
-const getTransport = async () => {
-    const account = await getAccount();
-    if (transport == null) {
-        transport = mailer.createTransport({
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD
-            },
-            host: 'smtp.mailgun.org',
-            port: 587
-        }, {
-            to: 'conruggles@gmail.com',
-            from: 'Githooks auto deploy application'
-        });
-    }
-    return transport;
+const onError = appName => {
+    console.log('something went wrong deploying ' + appName);
+    console.log(err);
+    return sendEmail('Error deploying ' + appName,
+                    `There was an error trying to deploy ${appName}: ${err.message}\n${err.stack}`)
+            .then(() => console.log('sent email telling of error'))
+            .catch(console.log);
+};
+
+const onSuccess = appName => {
+    console.log(`successfully deployed ${appName}`);
+    sendEmail(`Successfully deployed ${appName}`, 'No content.')
+        .then(() => console.log('sent success email')).catch(console.log);
 };
 
 app.post('/connorruggles.dev', (req, res) => {
     console.log(`received webhook for connorruggles.dev from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec(`cd /var/www/connorruggles.dev/html && git pull`, (err, stdout) => {
         if (err) {
-            console.log('something went wrong deploying connorruggles.dev');
-            return getTransport().then(() => {
-                transport.sendMail({
-                    subject: 'Error deploying connorruggles.dev',
-                    html: '<p>There was an error trying to deploy connorruggles.dev: ' + err.message + '<br>' + err.stack + '</p>'
-                }).then(info => {
-                    console.log('sent email telling of error; messageId: ' + info.messageId);
-                }).catch(console.log);
-            }).catch(console.log);
+            return onError('connorruggles.dev');
         }
-        console.log('successfully deployed connorruggles.dev');
-        getTransport().then(() => {
-            transport.sendMail({
-                subject: 'Successfully deployed connorruggles.dev',
-                html: '<p>No content.</p>'
-            }).then(info => console.log('sent success email with id ' + info.messageId));
-        }).catch(console.log);
+        onSuccess('connorruggles.dev');
     });
     res.end();
 });
@@ -61,26 +47,12 @@ app.post('/connorruggles.dev', (req, res) => {
 app.post('/budget-tracker-ui', (req, res) => {
     console.log(`received webhook for budget-tracker-ui from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec('cd /home/connor/dev/budget-tracker-ui && git pull && ' +
-         'npm install && ./node_modules/.bin/ng build --prod --progress=false && ' +
-         '/bin/cp dist/budget-tracker/* /var/www/budget-tracker-ui', {cwd: '/home/connor/dev/budget-tracker-ui'}, (err, stdout) => {
-             if (err) {
-                 console.log('something went wrong deploying budget-tracker-ui', err);
-                 return getTransport().then(() => {
-                    transport.sendMail({
-                        subject: 'Error deploying budget-tracker-ui',
-                        html: '<p>There was an error trying to deploy budget-tracker-ui: ' + err.message + '<br>' + err.stack + '</p>'
-                    }).then(info => {
-                        console.log('sent email telling of error; messageId: ' + info.messageId);
-                    }).catch(console.log);
-                }).catch(console.log);
-             }
-             console.log('successfully deployed budget-tracker-ui');
-             getTransport().then(() => {
-                transport.sendMail({
-                    subject: 'Successfully deployed budget-tracker-ui',
-                    html: '<p>No content.</p>'
-                }).then(info => console.log('sent success email with id ' + info.messageId));
-            }).catch(console.log);
+        'npm install && ./node_modules/.bin/ng build --prod --progress=false && ' +
+        '/bin/cp dist/budget-tracker/* /var/www/budget-tracker-ui', { cwd: '/home/connor/dev/budget-tracker-ui' }, (err, stdout) => {
+            if (err) {
+                return onError('budget-tracker-ui');
+            }
+            onSuccess('budget-tracker-ui');
     });
     res.end();
 });
@@ -89,23 +61,9 @@ app.post('/githooks', (req, res) => {
     console.log(`received webhook for githooks-node from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec('cd /var/www/githooks-node && git pull && npm install && /bin/systemctl restart githooks.service', (err, stdout) => {
         if (err) {
-            console.log('something went wrong deploying githooks');
-            return getTransport().then(() => {
-                transport.sendMail({
-                    subject: 'Error deploying githooks',
-                    html: '<p>There was an error trying to deploy githooks: ' + err.message + '<br>' + err.stack + '</p>'
-                }).then(info => {
-                    console.log('sent email telling of error; messageId: ' + info.messageId);
-                }).catch(console.log);
-            }).catch(console.log);
+            return onError('githooks');
         }
-        console.log('successfully deployed githooks');
-        getTransport().then(() => {
-            transport.sendMail({
-                subject: 'Successfully deployed githooks',
-                html: '<p>No content.</p>'
-            }).then(info => console.log('sent success email with id ' + info.messageId));
-        }).catch(console.log);
+        onSuccess('githooks');
     });
     res.end();
 });

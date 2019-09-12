@@ -5,8 +5,7 @@
   "main": "dist/index.js",
   "dependencies": {
     "express": "^4.17.1",
-    "nodemailer": "^6.3.0",
-    "npm-run": "^5.0.1"
+    "mailgun-js": "^0.22.0"
   },
   "devDependencies": {},
   "scripts": {
