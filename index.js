@@ -1,8 +1,11 @@
 const express = require('express');
 const exec = require('child_process').exec;
+
+console.log(process.env);
 const mg = require('mailgun-js')({ apiKey: process.env.MAILGUN_API_KEY, domain: 'mg.connorruggles.dev' });
 
 const app = express();
+
 
 const sendEmail = (subject, content, cb) => {
     return new Promise((resolve, reject) => {
