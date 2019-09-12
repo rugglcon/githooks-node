@@ -19,14 +19,12 @@ const getTransport = async () => {
     const account = await getAccount();
     if (transport == null) {
         transport = mailer.createTransport({
-            service: 'gmail',
             auth: {
                 user: process.env.EMAIL,
                 pass: process.env.PASSWORD
             },
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: true
+            host: 'smtp.mailgun.org',
+            port: 587
         }, {
             to: 'conruggles@gmail.com',
             from: 'Githooks auto deploy application'
