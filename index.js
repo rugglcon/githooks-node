@@ -17,16 +17,35 @@ app.use((req, res, next) => {
         return next('No signature header included in the request.');
     }
 
-    const payload = JSON.stringify(req.body);
+    let payload;
+    try {
+        payload = JSON.stringify(req.body);
+    } catch (e) {
+        const msg = `error calling JSON.stringify with argument ${req.body}. ${e.message}: ${e.stack}`;
+        console.log(msg);
+        sendEmail('Error happened while calling JSON.stringify', msg);
+        return next(msg);
+    }
+
+    console.log(`got payload ${payload}`);
+
     if (!payload) {
         sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}; no payload body was included.\n\nbody: ${req.body.toString()}`);
         return next('Request body empty');
     }
 
     const hmac = crypto.createHmac('sha1', process.env.GITHOOK_SECRET);
-    const digest = `sha1=${hmac.update(payload).digest('hex')}`;
+    let digest;
+    try {
+        digest = `sha1=${hmac.update(payload).digest('hex')}`;
+    } catch (e) {
+        const msg = `Error creating the digest. payload: ${payload}, error: ${e.message}`;
+        console.log(msg);
+        sendEmail('Error creating digest', msg);
+        return next(msg);
+    }
 
-    if (!digest) {
+    if (!digest || sig !== digest) {
         console.log('signatures didn\'t match');
         sendEmail('Invalid githook received', `Received an invalid githook request to ${req.originalUrl} from ${req.ip}; signatures didn't match.\n digest: ${digest}, sig: ${sig}`);
         return next('signatures didn\'t match');
@@ -45,7 +64,6 @@ app.use((err, req, res, next) => {
     if (err) {
         console.log(err);
     }
-    sendEmail('Something went wrong', 'Request body was not signed or verification failed');
     res.status(403).send('Request body was not signed or verification failed');
 });
 
