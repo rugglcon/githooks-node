@@ -111,7 +111,7 @@ app.post('/budget-tracker-ui', (req, res) => {
     console.log(`received webhook for budget-tracker-ui from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec('cd /home/connor/dev/budget-tracker-ui && git pull && ' +
         'npm install && ./node_modules/.bin/ng build --prod --progress=false && ' +
-        '/bin/cp dist/budget-tracker/* /var/www/budget-tracker-ui', { cwd: '/home/connor/dev/budget-tracker-ui' }, (err, stdout) => {
+        '/bin/cp -R dist/budget-tracker/* /var/www/budget-tracker-ui', { cwd: '/home/connor/dev/budget-tracker-ui' }, (err, stdout) => {
             if (err) {
                 return onError('budget-tracker-ui', err);
             }
