@@ -111,7 +111,7 @@ app.post('/budget-tracker-ui', (req, res) => {
     console.log(`received webhook for budget-tracker-ui from host: ${req.headers.host}, origin: ${req.get('origin')}`);
     exec('git pull && ./deploy.sh', { cwd: '/home/connor/dev/budget-tracker-ui' }, (err, stdout) => {
             if (err) {
-                return onError('budget-tracker-ui', err);
+                return onError('budget-tracker-ui', `${err} -----\n ${process.env}`);
             }
             onSuccess('budget-tracker-ui');
     });
