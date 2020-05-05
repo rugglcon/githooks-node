@@ -109,13 +109,12 @@ app.post('/connorruggles.dev', (req, res) => {
 
 app.post('/budget-tracker-ui', (req, res) => {
     console.log(`received webhook for budget-tracker-ui from host: ${req.headers.host}, origin: ${req.get('origin')}`);
-    // test removal 5/2/2020
-    // exec('git pull && ./deploy.sh', { cwd: '/home/connor/dev/budget-tracker-ui' }, (err, stdout) => {
-    //         if (err) {
-    //             return onError('budget-tracker-ui', `${err} -----\n ${process.env}`);
-    //         }
-    //         onSuccess('budget-tracker-ui');
-    // });
+    exec('git pull && ./deploy.sh', { cwd: '/home/connor/dev/budget-tracker-ui' }, (err, stdout) => {
+            if (err) {
+                return onError('budget-tracker-ui', `${err} -----\n ${process.env}`);
+            }
+            onSuccess('budget-tracker-ui');
+    });
     res.end();
 });
 
